@@ -4,13 +4,13 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import SettingsIcon from "@mui/icons-material/Settings";
-import "./navbar.css"; // Import du fichier CSS
+import "./navbar.css"; 
 
 export default function Navbar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" className="navbar" sx={{ 
-        backgroundColor: "#c18400", /* Applique l'orange ici directement */
+        backgroundColor: "#c18400", 
       }}>
         <Toolbar className="toolbar">
           <div className="logo-container">

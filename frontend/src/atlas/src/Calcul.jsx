@@ -1,36 +1,58 @@
 import React, { useState } from "react";
 
 function Calculator() {
-  const [result, setResult] = useState(0); // Résultat du premier nombre
-  const [result2, setResult2] = useState(0); // Résultat du deuxième nombre
-  const [input, setInput] = useState(""); // Valeur du premier nombre
-  const [input2, setInput2] = useState(""); // Valeur du deuxième nombre
-  const [difference, setDifference] = useState(0); // Différence entre les deux nombres
-  const [reciproque, setReciproque] = useState(0); // Calcul du réciproque
+  const [result, setResult] = useState(0);
+  const [result2, setResult2] = useState(0);
+  const [input, setInput] = useState("");
+  const [input2, setInput2] = useState("");
+  const [difference, setDifference] = useState(0);
+  const [reciproque, setReciproque] = useState(0);
+  const [sensibilite, setSensibilite] = useState(10);
+  const [rightAnswer, setRightAnswer] = useState([0, 0]);
 
-  const handleInputChange1 = (e) => {
-    setInput(e.target.value); // Mise à jour du premier nombre
+  // Fonction de transformation géométrique de l'ELO
+  const transformElo = (elo) => {
+    if (elo >= 100) return elo;  // Pour les valeurs >= 100, on garde l'ELO réel
+    const plancher = 50; // Valeur plancher
+    const compression = 2; // Facteur de compression
+    const activation = 100; // Seuil à partir duquel s'active la fonction géométrique
+    return Math.round(plancher * Math.pow(compression, elo / activation)); // Transformation géométrique
   };
 
-  const handleInputChange2 = (e) => {
-    setInput2(e.target.value); // Mise à jour du deuxième nombre
-  };
+  const handleInputChange1 = (e) => setInput(e.target.value);
+  const handleInputChange2 = (e) => setInput2(e.target.value);
 
-  const calculate = () => {
+  const calculate = (winner) => {
     try {
       const num1 = parseFloat(input);
       const num2 = parseFloat(input2);
-      
-      if (!isNaN(num1) && !isNaN(num2)) {
-        // Calculs
-        const diff = num1 - num2; // Différence
-        setDifference(diff); // Mettre à jour la différence
-        const reciproqueValue = 1 / (1 + Math.pow(10, -diff / 400)); // Calcul du réciproque
-        setReciproque(reciproqueValue); // Mettre à jour le réciproque
-        setResult(num1 + 20*(1-reciproqueValue));  // Augmenter de 7 le premier nombre
-        setResult2(num2 + 20*(0-(1-reciproqueValue))); // Diminuer de 7 le deuxième nombre
 
-        
+      if (!isNaN(num1) && !isNaN(num2)) {
+        let differenceValue = num1 - num2;
+        if (differenceValue > 400) {
+          differenceValue = 400;
+        }
+        if (differenceValue < -400) {
+          differenceValue = -400;
+        }
+        setDifference(differenceValue);
+
+        let reciproqueValue = 1 / (1 + Math.pow(10, -differenceValue / 400));
+        reciproqueValue = Math.round(reciproqueValue * 100) / 100;
+        setReciproque(reciproqueValue);
+
+        const rightAnswer = winner === "first" ? [1, 0] : [0, 1];
+        setRightAnswer(rightAnswer);
+
+        const nbQuestions = 20;
+        let sensibiliteValue = -100 / (1 + Math.exp(-0.1 * nbQuestions))+110;
+        setSensibilite(sensibiliteValue); 
+
+        const newResult1 = Math.round(num1 + sensibiliteValue * (rightAnswer[0] - reciproqueValue));
+        const newResult2 = Math.round(num2 + sensibiliteValue * (rightAnswer[1] - (1 - reciproqueValue)));
+
+        setResult(newResult1);
+        setResult2(newResult2);
       } else {
         setResult("Erreur : Entrez des nombres valides");
         setResult2("Erreur : Entrez des nombres valides");
@@ -56,12 +78,24 @@ function Calculator() {
         onChange={handleInputChange2}
         placeholder="Entrez un autre nombre"
       />
-      <button onClick={calculate}>Calculer</button>
+
       <div>
-        <h3>Premier résultat : {result} ({20*(1-reciproque)})</h3>
-        <h3>Deuxième résultat : {result2} ({20*(0-(1-reciproque))})</h3>
+        <button className="box" onClick={() => calculate("first")}>
+          Win 1
+        </button>
+        <span> . </span>
+        <button className="box" onClick={() => calculate("second")}>
+          Win 2
+        </button>
+      </div>
+
+      <div>
+        <h3>Premier résultat : {transformElo(result)} </h3>
+        <h3>Deuxième résultat : {transformElo(result2)} </h3>
         <h3>Différence : {difference}</h3>
         <h3>Réciproque : {reciproque}</h3>
+        <h3>Sensibilité : {sensibilite}</h3>
+        <h3>Gagnant : {rightAnswer[0] === 1 ? "Premier" : rightAnswer[1] === 1 ? "Deuxième" : "Aucun"}</h3>
       </div>
     </div>
   );
