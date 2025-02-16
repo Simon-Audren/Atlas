@@ -44,6 +44,11 @@
   .icons {
     display: flex;
     gap: 15px;
+
+  }
+  .icon-link {
+    color: inherit;
+    text-decoration:  none;
   }
   .icons svg {
     font-size: 2.2rem;

@@ -7,7 +7,7 @@ function Calculator() {
   const [input2, setInput2] = useState("");
   const [difference, setDifference] = useState(0);
   const [reciproque, setReciproque] = useState(0);
-  const [sensibilite, setSensibilite] = useState(10);
+  const [sensibilite, setSensibilite] = useState(20);
   const [rightAnswer, setRightAnswer] = useState([0, 0]);
 
   // Fonction de transformation géométrique de l'ELO
@@ -45,7 +45,7 @@ function Calculator() {
         setRightAnswer(rightAnswer);
 
         const nbQuestions = 20;
-        let sensibiliteValue = -100 / (1 + Math.exp(-0.1 * nbQuestions))+110;
+        let sensibiliteValue = -60 / (1 + Math.exp(-0.055 * nbQuestions))+70;
         setSensibilite(sensibiliteValue); 
 
         const newResult1 = Math.round(num1 + sensibiliteValue * (rightAnswer[0] - reciproqueValue));
