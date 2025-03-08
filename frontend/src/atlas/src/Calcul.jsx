@@ -10,11 +10,11 @@ function Calculator() {
   const [sensibilite, setSensibilite] = useState(20);
   const [rightAnswer, setRightAnswer] = useState([0, 0]);
 
-  // Fonction de transformation géométrique de l'ELO
+  // Fonction de transformation géométrique de l'ELO pour cacher les ELO négatifs 
   const transformElo = (elo) => {
     if (elo >= 100) return elo;  // Pour les valeurs >= 100, on garde l'ELO réel
-    const plancher = 50; // Valeur plancher
-    const compression = 2; // Facteur de compression
+    const plancher = 50; 
+    const compression = 2; 
     const activation = 100; // Seuil à partir duquel s'active la fonction géométrique
     return Math.round(plancher * Math.pow(compression, elo / activation)); // Transformation géométrique
   };
@@ -27,6 +27,7 @@ function Calculator() {
       const num1 = parseFloat(input);
       const num2 = parseFloat(input2);
 
+      //On calcule les différences et on les limitent à 400
       if (!isNaN(num1) && !isNaN(num2)) {
         let differenceValue = num1 - num2;
         if (differenceValue > 400) {
@@ -37,6 +38,7 @@ function Calculator() {
         }
         setDifference(differenceValue);
 
+        //Calcul de la valeur réciproque
         let reciproqueValue = 1 / (1 + Math.pow(10, -differenceValue / 400));
         reciproqueValue = Math.round(reciproqueValue * 100) / 100;
         setReciproque(reciproqueValue);
@@ -44,10 +46,12 @@ function Calculator() {
         const rightAnswer = winner === "first" ? [1, 0] : [0, 1];
         setRightAnswer(rightAnswer);
 
-        const nbQuestions = 20;
+        //Calcul de la sensibilité
+        const nbQuestions = 64;
         let sensibiliteValue = -60 / (1 + Math.exp(-0.055 * nbQuestions))+70;
         setSensibilite(sensibiliteValue); 
 
+        //Calcul de l'ELO
         const newResult1 = Math.round(num1 + sensibiliteValue * (rightAnswer[0] - reciproqueValue));
         const newResult2 = Math.round(num2 + sensibiliteValue * (rightAnswer[1] - (1 - reciproqueValue)));
 
