@@ -27,8 +27,10 @@ export default function Navbar() {
           <div className="icons">
             <Link to="/parameter" className="icon-link">
               <SettingsIcon />
-            </Link>
+            </Link >
+            <Link to="/Account" className="icon-link">
             <AccountBoxIcon />
+            </Link >
           </div>
         </Toolbar>
       </AppBar>

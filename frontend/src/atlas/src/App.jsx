@@ -9,6 +9,7 @@ import Home from "./pages/Home.jsx";
 import Parameter from "./pages/Parameter.jsx";
 import CalculPage from "./pages/CalculPage.jsx";
 import Solo from "./pages/Solo.jsx";
+import Account from "./pages/Account.jsx";
 
 import "../public/logo.png";
 import Calculator from "./Calcul.jsx";
@@ -23,6 +24,7 @@ function App() {
           <Route path="/Parameter" element={<Parameter />} />
           <Route path="/CalculPage" element={<CalculPage />} />
           <Route path="/Solo" element={<Solo />} />
+          <Route path="/Account" element={<Account />} />
 
         </Routes>
       </Router>
