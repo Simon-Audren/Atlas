@@ -13,6 +13,8 @@ function Home() {
     'https://aacunbvqmdakdllmzman.supabase.co', 
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhY3VuYnZxbWRha2RsbG16bWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYyNjMzOTUsImV4cCI6MjA1MTgzOTM5NX0.KH7rWXtBSYkmbYAYdWcsMy9cq1-aoPmq-MIIkLaOAWI'
   );
+  console.log("ENvironnement")
+  console.log(process.env.SUPABASE_URL)
 
   useEffect(() => {
     fetchRandomQuestion();
