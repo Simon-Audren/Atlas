@@ -11,6 +11,7 @@ function Account() {
             const currentUser = await getCurrentUser();
             if (currentUser) {
                 setUser(currentUser);
+                await handleUserSync(currentUser.id); // Ajouter l'utilisateur si nécessaire
             }
         };
 
@@ -28,6 +29,26 @@ function Account() {
     const handleSignOut = async () => {
         await signOut();
         setUser(null);
+    };
+
+    // Fonction pour envoyer l'ID utilisateur au backend et vérifier s'il doit être ajouté
+    const handleUserSync = async (userId) => {
+        try {
+            const response = await fetch("http://localhost:3001/auth-google", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    user_id: userId, // Envoie l'ID utilisateur de Supabase
+                }),
+            });
+
+            const data = await response.json();
+            console.log(data); // Affiche la réponse du serveur
+        } catch (error) {
+            console.error("Erreur lors de la synchronisation de l'utilisateur :", error);
+        }
     };
 
     return (
