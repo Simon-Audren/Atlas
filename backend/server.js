@@ -43,6 +43,7 @@ app.post("/auth-google", async (req, res) => {
     console.log("Requête reçue:", req.body);
 
     const { google_id } = req.body;  // Récupération du google_id
+    console.log("ID utilisateur reçu:", google_id);
 
     if (!google_id) {
         return res.status(400).json({ error: "ID utilisateur Google manquant" });
@@ -56,6 +57,7 @@ app.post("/auth-google", async (req, res) => {
             .single();
 
         if (existingUser) {
+            console.log("Utilisateur existant trouvé avec google_id:", google_id);
             return res.status(200).json({ message: "Utilisateur déjà existant", user: existingUser });
         }
 
@@ -67,6 +69,7 @@ app.post("/auth-google", async (req, res) => {
 
         if (insertError) throw insertError;
 
+        console.log("Utilisateur créé avec google_id:", google_id);
         return res.status(201).json({ message: "Utilisateur créé avec succès", user: newUser });
 
     } catch (error) {
@@ -74,9 +77,7 @@ app.post("/auth-google", async (req, res) => {
     }
 });
 
-
-
-
+// Route POST pour mettre à jour l'ELO
 app.post("/update-elo", async (req, res) => {
     const { user_id, eloIncrement } = req.body;  // On récupère l'ID utilisateur (google_id) et l'incrément d'ELO
 
@@ -122,8 +123,6 @@ app.post("/update-elo", async (req, res) => {
     }
 });
 
-
-
 // Route POST pour ajouter un utilisateur test
 app.post("/test", async (req, res) => {
     console.log("Requête reçue pour ajouter un utilisateur test");
@@ -150,7 +149,6 @@ app.post("/test", async (req, res) => {
         return res.status(500).json({ error: "Erreur serveur", details: error.message });
     }
 });
-
 
 // Route principale
 app.get("/", (req, res) => {
