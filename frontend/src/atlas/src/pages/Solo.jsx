@@ -28,8 +28,8 @@ function Home() {
     setSelectedAnswer(null);
     setCorrectAnswerIndex(null);
 
-    const { data, error } = await supabase.from("questions").select("*");
-
+    const { data, error } = await supabase.from("questions").select("*").gte("elo", 1180).lte("elo", 1190);
+console.log(data)
     if (error) {
         console.error("Erreur:", error);
     } else {
@@ -81,6 +81,7 @@ function Home() {
     }
     setLoading(false);
 }
+
 
   
 
@@ -170,18 +171,20 @@ function Home() {
 
 
 
-  function handleAnswerClick(index) {
-    setSelectedAnswer(index);
-    setLoading(true); // Désactive les boutons pendant le traitement
+function handleAnswerClick(index) {
+  setSelectedAnswer(index);
+  setLoading(true); // Désactive les boutons pendant le traitement
 
-    const isCorrect = index === correctAnswerIndex;
-    updateElo(isCorrect); // Mise à jour de l'ELO en fonction de la réponse
+  const isCorrect = index === correctAnswerIndex;
+  updateElo(isCorrect); // Mise à jour de l'ELO en fonction de la réponse
 
-    // Attendre 1 seconde avant de charger la prochaine question
-    setTimeout(() => {
-      fetchRandomQuestion();
-    }, 1000);
-  }
+  // Attendre 1 seconde avant de charger la prochaine question
+  setTimeout(() => {
+    fetchRandomQuestion();
+  }, 1000);
+}
+
+
 
   return (
     <>
@@ -199,7 +202,7 @@ function Home() {
       <div className="question-container">
         {question ? (
           <div>
-            <p><strong>Question :</strong> {question.question_text}</p>
+            <p><strong>{question.question_text}</strong></p>
             <div className="answers">
               {answers.map((answer, index) => (
                 <button
