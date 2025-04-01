@@ -28,27 +28,56 @@ function Home() {
     setSelectedAnswer(null);
     setCorrectAnswerIndex(null);
 
-    const { data, error } = await supabase.from("questions").select("*").gte("elo", 1180).lte("elo", 1190);
-console.log(data)
-    if (error) {
-        console.error("Erreur:", error);
-    } else {
-        // 1. Attribuer la même probabilité à chaque question
-        const equalProbability = 1 / data.length;  // Chaque question a la même probabilité
+    try {
+        const user = await supabase.auth.getUser();
+        if (!user || !user.data || !user.data.user) {
+            console.error("Utilisateur non connecté");
+            setLoading(false);
+            return;
+        }
 
-        // 2. Créer un tableau des probabilités égales pour chaque question
-        const probabilities = data.map((question) => ({
+        const userId = user.data.user.id;
+        const { data: userData, error: userError } = await supabase
+            .from("users")
+            .select("elo")
+            .eq("google_id", userId)
+            .single();
+
+        if (userError) {
+            console.error("Erreur récupération ELO:", userError);
+            setLoading(false);
+            return;
+        }
+
+        const userElo = userData.elo;
+        const minElo = userElo-10;
+        const maxElo = userElo+10;
+        console.log(minElo,maxElo)
+        const { data: questions, error: questionsError } = await supabase
+            .from("questions")
+            .select("*")
+            .gte("elo", minElo)
+            .lte("elo", maxElo);
+
+        if (questionsError) {
+            console.error("Erreur récupération questions:", questionsError);
+            setLoading(false);
+            return;
+        }
+
+        console.log(questions);
+
+        const equalProbability = 1 / questions.length;
+        const probabilities = questions.map((question) => ({
             question: question,
             probability: equalProbability,
         }));
 
-        // 3. Normaliser les probabilités (pour que la somme fasse 1)
         const totalProbability = probabilities.reduce((sum, probObj) => sum + probObj.probability, 0);
         probabilities.forEach((probObj) => {
             probObj.normalizedProbability = probObj.probability / totalProbability;
         });
 
-        // 4. Générer un tirage basé sur les probabilités normalisées
         const randomValue = Math.random();
         let cumulativeProbability = 0;
         let selectedQuestion = null;
@@ -61,7 +90,6 @@ console.log(data)
             }
         }
 
-        // 5. Mettre à jour l'état avec la question sélectionnée
         setQuestion(selectedQuestion);
 
         const allAnswers = [
@@ -76,8 +104,9 @@ console.log(data)
         const shuffledAnswers = allAnswers.sort(() => Math.random() - 0.5);
         setAnswers(shuffledAnswers);
 
-        // Stocke l'index de la bonne réponse après mélange
         setCorrectAnswerIndex(shuffledAnswers.indexOf(selectedQuestion.correct_answer));
+    } catch (error) {
+        console.error("Erreur inattendue:", error);
     }
     setLoading(false);
 }
@@ -167,8 +196,6 @@ console.log(data)
         console.error("Erreur serveur:", error);
     }
 }
-
-
 
 
 function handleAnswerClick(index) {
