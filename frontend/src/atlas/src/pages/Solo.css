@@ -1,10 +1,12 @@
 .question-container {
     text-align: center;
     margin-top: 20px;
+
+  }
+  .question{
     font-size: 30px;
 
   }
-  
   .answers {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 2 lignes de 3 colonnes */
@@ -33,6 +35,10 @@
     word-wrap: break-word; /* Coupe les mots trop longs */
     text-overflow: ellipsis;
   }
+
+
+
+
   
   .answer-button:hover {
     background-color: #116bcc;

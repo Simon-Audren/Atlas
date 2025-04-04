@@ -1,0 +1,6 @@
+const applyProbability = (elo) => {
+        const x = elo - playerElo; // Différence entre l'ELO de la question et celui du joueur
+        const factor = 0.1 / (5 * Math.sqrt(2 * Math.PI));
+        const exponent = -((0.05 * Math.pow(x, 2)) / Math.pow(16, 2));
+        return factor * Math.exp(exponent);
+    };

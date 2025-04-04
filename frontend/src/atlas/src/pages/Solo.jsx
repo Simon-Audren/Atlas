@@ -23,96 +23,147 @@ function Home() {
     fetchElo();
   }, []);
 
-  async function fetchRandomQuestion() {
-    setLoading(true);
-    setSelectedAnswer(null);
-    setCorrectAnswerIndex(null);
+ // Fonction pour la première plage (0 à 0,5)
+const calculateValueFirstRange = (x) => {
+  return 250 / (1 + Math.exp(-15 * (x - 0.9)));
+};
 
-    try {
-        const user = await supabase.auth.getUser();
-        if (!user || !user.data || !user.data.user) {
-            console.error("Utilisateur non connecté");
-            setLoading(false);
-            return;
-        }
+// Fonction pour la deuxième plage (0,5 à 1)
+const calculateValueSecondRange = (x) => {
+  return (250 / (1 + Math.exp(-15 * (x - 0.1)))) - 250;
+};
 
-        const userId = user.data.user.id;
-        const { data: userData, error: userError } = await supabase
-            .from("users")
-            .select("elo")
-            .eq("google_id", userId)
-            .single();
+// Code principal
+async function fetchRandomQuestion() { 
+  setLoading(true);
+  setSelectedAnswer(null);
+  setCorrectAnswerIndex(null);
 
-        if (userError) {
-            console.error("Erreur récupération ELO:", userError);
-            setLoading(false);
-            return;
-        }
+  try {
+      const user = await supabase.auth.getUser();
+      if (!user || !user.data || !user.data.user) {
+          console.error("Utilisateur non connecté");
+          setLoading(false);
+          return;
+      }
 
-        const userElo = userData.elo;
-        const minElo = userElo-10;
-        const maxElo = userElo+10;
-        console.log(minElo,maxElo)
-        const { data: questions, error: questionsError } = await supabase
-            .from("questions")
-            .select("*")
-            .gte("elo", minElo)
-            .lte("elo", maxElo);
+      const userId = user.data.user.id;
+      const { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("elo")
+          .eq("google_id", userId)
+          .single();
 
-        if (questionsError) {
-            console.error("Erreur récupération questions:", questionsError);
-            setLoading(false);
-            return;
-        }
+      if (userError) {
+          console.error("Erreur récupération ELO:", userError);
+          setLoading(false);
+          return;
+      }
 
-        console.log(questions);
+      const userElo = userData.elo;
 
-        const equalProbability = 1 / questions.length;
-        const probabilities = questions.map((question) => ({
-            question: question,
-            probability: equalProbability,
-        }));
+      // Générer un nombre aléatoire entre 0 et 1 avec 3 chiffres après la virgule
+      const randomValue = parseFloat((Math.random()).toFixed(3));
+      console.log(randomValue);
 
-        const totalProbability = probabilities.reduce((sum, probObj) => sum + probObj.probability, 0);
-        probabilities.forEach((probObj) => {
-            probObj.normalizedProbability = probObj.probability / totalProbability;
-        });
+      // Appliquer la bonne fonction selon la valeur de randomValue
+      let transformedValue;
+      if (randomValue <= 0.5) {
+          transformedValue = calculateValueSecondRange(randomValue);
+      } else {
+          transformedValue =  calculateValueFirstRange(randomValue);
+      }
+      console.log(transformedValue);
 
-        const randomValue = Math.random();
-        let cumulativeProbability = 0;
-        let selectedQuestion = null;
+      // Calculer minElo et maxElo en fonction de la valeur transformée
+      const minElo = Math.round(userElo + transformedValue - 20); // minElo = ELO - (valeur - 10)
+      const maxElo = Math.round(userElo + transformedValue + 20); // maxElo = ELO + (valeur + 10)
 
-        for (const probObj of probabilities) {
-            cumulativeProbability += probObj.normalizedProbability;
-            if (randomValue <= cumulativeProbability) {
-                selectedQuestion = probObj.question;
-                break;
-            }
-        }
+      console.log(minElo, maxElo);
 
-        setQuestion(selectedQuestion);
+      // Récupérer les questions dans l'intervalle minElo et maxElo
+      let { data: questions, error: questionsError } = await supabase
+          .from("questions")
+          .select("*")
+          .gte("elo", minElo)
+          .lte("elo", maxElo);
 
-        const allAnswers = [
-            selectedQuestion.correct_answer,
-            selectedQuestion.wrong_answer_1,
-            selectedQuestion.wrong_answer_2,
-            selectedQuestion.wrong_answer_3,
-            selectedQuestion.wrong_answer_4,
-            selectedQuestion.wrong_answer_5,
-        ];
+      // Si pas de questions dans l'intervalle, récupérer toutes les questions
+      if (questionsError) {
+          console.error("Erreur récupération questions:", questionsError);
+          setLoading(false);
+          return;
+      }
 
-        const shuffledAnswers = allAnswers.sort(() => Math.random() - 0.5);
-        setAnswers(shuffledAnswers);
+      // Si aucune question dans l'intervalle, récupérer toutes les questions disponibles
+      if (questions.length === 0) {
+          console.log("Aucune question dans l'intervalle, récupération de toutes les questions.");
+          const { data: allQuestions, error: allQuestionsError } = await supabase
+              .from("questions")
+              .select("*");
 
-        setCorrectAnswerIndex(shuffledAnswers.indexOf(selectedQuestion.correct_answer));
-    } catch (error) {
-        console.error("Erreur inattendue:", error);
-    }
-    setLoading(false);
+          if (allQuestionsError) {
+              console.error("Erreur récupération de toutes les questions:", allQuestionsError);
+              setLoading(false);
+              return;
+          }
+
+          questions = allQuestions;
+      }
+
+      console.log(questions);
+
+      // Calculer les probabilités pour chaque question
+      const equalProbability = 1 / questions.length;
+      const probabilities = questions.map((question) => {
+          const prob = calculateValueFirstRange(question.elo); // Appliquer la fonction de transformation pour ajuster la probabilité
+          return {
+              question: question,
+              probability: prob, // Probabilité ajustée
+          };
+      });
+
+      // Normaliser les probabilités
+      const totalProbability = probabilities.reduce((sum, probObj) => sum + probObj.probability, 0);
+      probabilities.forEach((probObj) => {
+          probObj.normalizedProbability = probObj.probability / totalProbability;
+      });
+
+      // Choisir une question en fonction des probabilités
+      const randomSelectionValue = Math.random();
+      let cumulativeProbability = 0;
+      let selectedQuestion = null;
+
+      for (const probObj of probabilities) {
+          cumulativeProbability += probObj.normalizedProbability;
+          if (randomSelectionValue <= cumulativeProbability) {
+              selectedQuestion = probObj.question;
+              break;
+          }
+      }
+
+      setQuestion(selectedQuestion);
+
+      const allAnswers = [
+          selectedQuestion.correct_answer,
+          selectedQuestion.wrong_answer_1,
+          selectedQuestion.wrong_answer_2,
+          selectedQuestion.wrong_answer_3,
+          selectedQuestion.wrong_answer_4,
+          selectedQuestion.wrong_answer_5,
+      ];
+
+      const shuffledAnswers = allAnswers.sort(() => Math.random() - 0.5);
+      setAnswers(shuffledAnswers);
+
+      setCorrectAnswerIndex(shuffledAnswers.indexOf(selectedQuestion.correct_answer));
+  } catch (error) {
+      console.error("Erreur inattendue:", error);
+  }
+  setLoading(false);
 }
 
 
-  
 
   async function fetchElo() {
     try {
@@ -142,101 +193,116 @@ function Home() {
 
   async function updateElo(won) {
     try {
-        const { data: userData, error: userError } = await supabase.auth.getUser();
-        if (userError || !userData || !userData.user) {
-            console.error("Utilisateur non trouvé:", userError);
-            return;
-        }
+      const { data: userData, error: userError } =
+        await supabase.auth.getUser();
+      if (userError || !userData || !userData.user) {
+        console.error("Utilisateur non trouvé:", userError);
+        return;
+      }
 
-        const userId = userData.user.id; // Récupération de l'ID de l'utilisateur
+      const userId = userData.user.id; // Récupération de l'ID de l'utilisateur
 
-        if (!question || question.elo === undefined) {
-            console.error("ELO de la question non disponible");
-            return;
-        }
+      if (!question || question.elo === undefined) {
+        console.error("ELO de la question non disponible");
+        return;
+      }
 
-        // Récupération de l'ELO du joueur
-        const { data, error } = await supabase
-            .from("users")
-            .select("elo")
-            .eq("google_id", userId)
-            .single();
+      // Récupération de l'ELO du joueur
+      const { data, error } = await supabase
+        .from("users")
+        .select("elo")
+        .eq("google_id", userId)
+        .single();
 
-        if (error || !data) {
-            console.error("Erreur récupération ELO du joueur:", error);
-            return;
-        }
+      if (error || !data) {
+        console.error("Erreur récupération ELO du joueur:", error);
+        return;
+      }
 
-        const playerElo = data.elo; // ELO actuel du joueur
-        console.log("Joueur ELO:", playerElo);
-        console.log("Question ELO:", question.elo);
+      const playerElo = data.elo; // ELO actuel du joueur
+      console.log("Joueur ELO:", playerElo);
+      console.log("Question ELO:", question.elo);
 
-        const response = await fetch("http://localhost:3001/calculate-elo", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                player1_elo: playerElo,  // ELO du joueur
-                player2_elo: question.elo,  // ELO de la question
-                winner: won ? "first" : "second",
-                userId: userId, // Envoie l'ID de l'utilisateur
-                questionId: question.id // Envoie l'ID de la question
-            }),
-        });
+      const response = await fetch("http://localhost:3001/calculate-elo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          player1_elo: playerElo, // ELO du joueur
+          player2_elo: question.elo, // ELO de la question
+          winner: won ? "first" : "second",
+          userId: userId, // Envoie l'ID de l'utilisateur
+          questionId: question.id, // Envoie l'ID de la question
+        }),
+      });
 
-        const responseData = await response.json();
-        if (response.ok) {
-            console.log("Nouveaux ELO:", responseData);
-            setElo(responseData.newElo1); // Met à jour l'affichage du nouvel ELO
-        } else {
-            console.error("Erreur mise à jour ELO:", responseData.error);
-        }
+      const responseData = await response.json();
+      if (response.ok) {
+        console.log("Nouveaux ELO:", responseData);
+        setElo(responseData.newElo1); // Met à jour l'affichage du nouvel ELO
+      } else {
+        console.error("Erreur mise à jour ELO:", responseData.error);
+      }
     } catch (error) {
-        console.error("Erreur serveur:", error);
+      console.error("Erreur serveur:", error);
     }
-}
+  }
 
+  function handleAnswerClick(index) {
+    setSelectedAnswer(index);
+    setLoading(true); // Désactive les boutons pendant le traitement
 
-function handleAnswerClick(index) {
-  setSelectedAnswer(index);
-  setLoading(true); // Désactive les boutons pendant le traitement
+    const isCorrect = index === correctAnswerIndex;
+    updateElo(isCorrect); // Mise à jour de l'ELO en fonction de la réponse
 
-  const isCorrect = index === correctAnswerIndex;
-  updateElo(isCorrect); // Mise à jour de l'ELO en fonction de la réponse
-
-  // Attendre 1 seconde avant de charger la prochaine question
-  setTimeout(() => {
-    fetchRandomQuestion();
-  }, 1000);
-}
-
-
+    // Attendre 1 seconde avant de charger la prochaine question
+    setTimeout(() => {
+      fetchRandomQuestion();
+    }, 1000);
+  }
 
   return (
     <>
       <Navbar />
       <div className="container">
-        <a href="/solo" className="box">Solo</a>
-        <a href="/multijoueur" className="box">Multijoueur</a>
+        <a href="/solo" className="box">
+          Solo
+        </a>
       </div>
 
       <div className="elo-container">
-        <p><strong>Votre ELO :</strong> {elo !== null ? elo : "Chargement..."}</p>
-        {newElo !== null && <p><strong>Nouvel ELO :</strong> {newElo}</p>}
+        <p>
+          <strong>Votre ELO :</strong> {elo !== null ? elo : "Chargement..."}
+        </p>
+        {newElo !== null && (
+          <p>
+            <strong>Nouvel ELO :</strong> {newElo}
+          </p>
+        )}
       </div>
 
       <div className="question-container">
         {question ? (
           <div>
-            <p><strong>{question.question_text}</strong></p>
+            <p>
+              <strong className="question">{question.question_text}</strong>
+            </p>
             <div className="answers">
               {answers.map((answer, index) => (
                 <button
                   key={index}
                   className={`answer-button 
-                    ${selectedAnswer !== null && index === correctAnswerIndex && "correct"}
-                    ${selectedAnswer === index && index !== correctAnswerIndex && "incorrect"}`}
+                    ${
+                      selectedAnswer !== null &&
+                      index === correctAnswerIndex &&
+                      "correct"
+                    }
+                    ${
+                      selectedAnswer === index &&
+                      index !== correctAnswerIndex &&
+                      "incorrect"
+                    }`}
                   onClick={() => handleAnswerClick(index)}
                   disabled={loading}
                 >

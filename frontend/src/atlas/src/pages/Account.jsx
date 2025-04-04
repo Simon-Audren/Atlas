@@ -9,7 +9,11 @@ import {
 
 function Account() {
   const [user, setUser] = useState(null);
-
+  useEffect(() => {
+    if (user) {
+      handleUserSync();
+    }
+  }, [user]);
   useEffect(() => {
     const fetchUser = async () => {
       const currentUser = await getCurrentUser();
@@ -23,15 +27,15 @@ function Account() {
     listenToAuthChanges(setUser);
   }, []);
 
-  const handleSignIn = async () => {
-    await signInWithOAuth("google");
-  };
+ 
 
   const handleSignOut = async () => {
     await signOut();
     setUser(null);
   };
-
+  const handleSignIn = async () => {
+    await signInWithOAuth("google");
+  };
   const handleUserSync = async () => {
     const userId = user.id
     const elo = 1200; // Valeur d'ELO pour l'utilisateur test
@@ -104,6 +108,9 @@ function Account() {
     }
   };
 
+
+
+    
   return (
     <div>
       <Navbar />
@@ -114,7 +121,6 @@ function Account() {
               Bienvenue,{" "}
               {user.user_metadata ? user.user_metadata.full_name : user.email}
             </p>
-            {/* Affichage de l'ID de l'utilisateur ici */}
             <p>Votre ID utilisateur : {user.id}</p>
             <button onClick={handleSignOut}>Se déconnecter</button>
           </div>
@@ -124,16 +130,9 @@ function Account() {
             <button onClick={handleSignIn}>Se connecter avec Google</button>
           </div>
         )}
-        {/* Bouton pour ajouter un utilisateur test */}
-        <button onClick={handleAddTestUser} style={{ marginTop: "20px" }}>
-          Nouvel utilisateur test
-        </button>
+
       </div>
-      <div>
-        <button onClick={updateUserElo} style={{ marginTop: "20px" }}>
-          +4 ELO
-        </button>
-      </div>
+
       <div>
         <button onClick={handleUserSync} style={{ marginTop: "20px" }}>
 user dans users        </button>
