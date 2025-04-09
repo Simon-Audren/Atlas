@@ -19,15 +19,13 @@ function Account() {
       const currentUser = await getCurrentUser();
       if (currentUser) {
         setUser(currentUser);
-        await handleUserSync(currentUser.id);  // Synchronisation de l'ID
+        await handleUserSync(currentUser.id); // Synchronisation de l'ID
       }
     };
 
     fetchUser();
     listenToAuthChanges(setUser);
   }, []);
-
- 
 
   const handleSignOut = async () => {
     await signOut();
@@ -37,7 +35,7 @@ function Account() {
     await signInWithOAuth("google");
   };
   const handleUserSync = async () => {
-    const userId = user.id
+    const userId = user.id;
     const elo = 1200; // Valeur d'ELO pour l'utilisateur test
 
     try {
@@ -85,7 +83,7 @@ function Account() {
   };
 
   const updateUserElo = async () => {
-    const userId = user.id
+    const userId = user.id;
     const eloIncrement = 4; // L'incrément d'ELO à ajouter
 
     try {
@@ -108,9 +106,6 @@ function Account() {
     }
   };
 
-
-
-    
   return (
     <div>
       <Navbar />
@@ -118,24 +113,35 @@ function Account() {
         {user ? (
           <div>
             <p>
+              {user.user_metadata?.avatar_url && (
+                <img
+                  src={user.user_metadata.avatar_url}
+                  alt="Photo de profil"
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "50%",
+                    marginBottom: "1rem",
+                  }}
+                />
+              )}
+              <br />
               Bienvenue,{" "}
               {user.user_metadata ? user.user_metadata.full_name : user.email}
             </p>
-            <p>Votre ID utilisateur : {user.id}</p>
-            <button onClick={handleSignOut}>Se déconnecter</button>
+            <br />
+            <a className="box" onClick={handleSignOut}>
+              Se déconnecter
+            </a>
           </div>
         ) : (
           <div>
             <h2>Connexion</h2>
-            <button onClick={handleSignIn}>Se connecter avec Google</button>
+            <a className="box" onClick={handleSignIn}>
+              Se connecter avec Google
+            </a>
           </div>
         )}
-
-      </div>
-
-      <div>
-        <button onClick={handleUserSync} style={{ marginTop: "20px" }}>
-user dans users        </button>
       </div>
     </div>
   );

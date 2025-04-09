@@ -94,7 +94,9 @@ function Home() {
                   alt="Fonction de sensibilité"
                   width="100%"
                 />
-                <p className="description">Plusieurs propositions de fonction de sensibilité</p>
+                <p className="description">
+                  Plusieurs propositions de fonction de sensibilité
+                </p>
               </div>
             }
           />
@@ -102,27 +104,45 @@ function Home() {
             title="Comment les questions sont choisies ?"
             content={
               <div className="accordion-content">
-                Il n'est pas possible d'avoir un Elo négatif sur Atlas.
-                
+                L'objectif de la fonction d'attribution des questions est de
+                donner une grande majorité de questions qui sont au niveau du
+                joueur pour qu'elles soient adaptés à sa courbe de progression.
+                <br />
+                Afin de s'assurer que le calcul de l'Elo ne se trompe pas par
+                rapport au niveau réel du joueur, la fonction d'attribution
+                donne rarement également des questions très faciles et des
+                questions très dures. En s'assurant que le joueur réussit les
+                questions faciles et tend à échouer sur les questions dures, on
+                s'assure de bien représenter son Elo.
                 <img
                   src="./Fonction d'attribution.png"
                   alt="Fonction d'attribution"
                   width="100%"
                 />
                 <p className="description">Fonction géométrique</p>
-                Dans ce cas précis, il existe donc une différence entre l'elo
-                affiché et celui qui existe dans la base de données.
+                Ci-dessus la fonction géométrique qui détermine les questions
+                qui seront affichés au joueur. On rentre dans la fonction un
+                nombre aléatoire compris entre 0 et 1 et la fonction nous
+                renvoie un nombre compris entre -200 et 200. Ce nombre est
+                proche de l'Elo du joueur quand l'entrée vaut entre 0,3 et 0,7
+                et part dans les extrêmes quand on se rapproche de 0 ou de 1.
+                <br/>
+                Une fois que la fonction a renvoyé son attribution, on regarde
+                dans la base de données s'il existe une question proche de l'Elo
+                du joueur + l'attribution et on l'affiche à l'écran. Si aucune
+                question n'est suffisamment proche, on choisi aléatoirement
+                parmi toutes les questions pour éviter la redondance.
               </div>
             }
           />
           <AccordionItem
-            title="Puis-je avoir un elo négatif ?"
+            title="Puis-je avoir un Elo négatif ?"
             content={
               <div className="accordion-content">
                 Il n'est pas possible d'avoir un Elo négatif sur Atlas.
                 <br />
                 Cependant il existe une particularité : l'Elo affiché sur le
-                site peut ne pas correspondre à l'elo stocké dans la base de
+                site peut ne pas correspondre à l'Elo stocké dans la base de
                 données. En effet, le système de notation d'Elo fonctionne
                 parfaitement, même avec des Elos négatifs. La différence entre
                 -100 et 0 est la même qu'entre 1000 et 1100.
@@ -132,13 +152,13 @@ function Home() {
                 pas être négatif. Pour ce faire à partir d'un certain seuil,
                 l'Elo subit une transformation géométrique comme suit :
                 <br />
-                100 elo affiche 100 elo
+                100 Elo affiche 100 Elo
                 <br />
-                0 elo affiche 50 elo
+                0 Elo affiche 50 Elo
                 <br />
-                -100 elo affiche 25 elo
+                -100 Elo affiche 25 Elo
                 <br />
-                -200 elo affiche 12 elo etc...
+                -200 Elo affiche 12 Elo etc...
                 <br />
                 <img
                   src="./Fonction géométrique.png"
@@ -146,7 +166,7 @@ function Home() {
                   width="100%"
                 />
                 <p className="description">Fonction géométrique</p>
-                Dans ce cas précis, il existe donc une différence entre l'elo
+                Dans ce cas précis, il existe donc une différence entre l'Elo
                 affiché et celui qui existe dans la base de données.
               </div>
             }
@@ -154,7 +174,7 @@ function Home() {
         </div>
       </div>
 
-      <p>agdyagdadayviayv</p>
+      <p>Un site réalisé par Simon Audren</p>
     </>
   );
 }
