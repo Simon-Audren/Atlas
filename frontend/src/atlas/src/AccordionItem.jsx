@@ -11,10 +11,11 @@ const AccordionItem = ({ title, content }) => {
         borderRadius: '10px !important', 
         overflow: 'hidden',
         marginBottom: '1rem',
+        
       }}
     >
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
+        expandIcon={<ExpandMoreIcon sx={{ color: 'white' }} />}
         aria-controls="panel-content"
         id="panel-header"
         sx={{
@@ -26,9 +27,10 @@ const AccordionItem = ({ title, content }) => {
           height: '56px',
           minHeight: '56px',
           alignItems: 'center',
+
         }}
       >
-        <Typography component="span" sx={{ fontSize: '1rem' }}>
+        <Typography component="span" sx={{ fontSize: '1rem',fontWeight: 'bold', color:'white' }}>
           {title}
         </Typography>
       </AccordionSummary>

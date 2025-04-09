@@ -40,7 +40,20 @@
   
   .accordion-container {
     margin-top: 8rem;
-    max-height: calc(100vh - 60px); /* Calculer la hauteur restante pour l'espace visible */
-    overflow-y: auto; /* Permet de faire défiler le contenu des accordéons */
+    overflow-y: hidden; /* Permet de faire défiler le contenu des accordéons */
     padding: 0 1rem; /* Pour ajouter un peu de marge autour des accordéons */
+  }
+  .accordion-content {
+    text-align: left; /* Aligne le texte à gauche */
+    padding: 10px;    /* Ajoute de l'espace autour du contenu */
+    color: white;
+  }
+  .link{
+    color:white;
+  }
+  .description {
+    font-size: 0.875rem; /* taille petite */
+    font-style: italic;
+    text-align: center;
+    color: white; /* ou une autre couleur si tu veux */
   }
