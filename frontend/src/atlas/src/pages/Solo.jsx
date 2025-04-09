@@ -265,11 +265,6 @@ async function fetchRandomQuestion() {
   return (
     <>
       <Navbar />
-      <div className="container">
-        <a href="/solo" className="box">
-          Solo
-        </a>
-      </div>
 
       <div className="elo-container">
         <p>
