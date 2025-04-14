@@ -1,16 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Remplace ces valeurs par celles de ton projet Supabase
 const supabaseUrl = 'https://aacunbvqmdakdllmzman.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhY3VuYnZxbWRha2RsbG16bWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYyNjMzOTUsImV4cCI6MjA1MTgzOTM5NX0.KH7rWXtBSYkmbYAYdWcsMy9cq1-aoPmq-MIIkLaOAWI';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Fonction de connexion via OAuth (Google)
+// Fonction de connexion via OAuth 
 export const signInWithOAuth = async (provider = 'google') => {
   try {
     const { user, session, error } = await supabase.auth.signInWithOAuth({
-      provider, // 'google' sera passé ici pour une connexion via Google
+      provider, 
     });
 
     if (error) {
@@ -48,9 +47,9 @@ export const listenToAuthChanges = (setUser) => {
       console.log('Session :', session);
   
       if (session?.user) {
-        setUser(session.user); // Met à jour l'état avec l'utilisateur connecté
+        setUser(session.user); 
       } else {
-        setUser(null); // L'utilisateur est déconnecté
+        setUser(null);é
       }
     });
   };
@@ -59,6 +58,6 @@ export const listenToAuthChanges = (setUser) => {
 export const requireAuth = () => {
   const user = supabase.auth.user();
   if (!user) {
-    window.location.href = '/login'; // Remplace '/login' par ton URL de page de connexion
+    window.location.href = '/login'; 
   }
 };

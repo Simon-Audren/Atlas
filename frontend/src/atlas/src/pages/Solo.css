@@ -9,7 +9,7 @@
   }
   .answers {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 2 lignes de 3 colonnes */
+    grid-template-columns: repeat(3, 1fr); 
     gap: 10px;
     justify-content: center;
     margin-top: 20px;
@@ -25,14 +25,14 @@
     padding: 15px;
     cursor: pointer;
     transition: 0.3s;
-    width: 220px; /* Largeur plus grande */
-    height: 80px; /* Hauteur plus grande pour laisser la place aux longues réponses */
+    width: 220px; 
+    height: 80px; 
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    white-space: normal; /* Permet le retour à la ligne */
-    word-wrap: break-word; /* Coupe les mots trop longs */
+    white-space: normal; 
+    word-wrap: break-word; 
     text-overflow: ellipsis;
   }
 

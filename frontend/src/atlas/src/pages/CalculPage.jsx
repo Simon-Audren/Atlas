@@ -5,7 +5,7 @@ import Calculator from "../Calcul.jsx";
 function CalculPage() {
   const [elo, setElo] = useState(null);
 
-  // Fonction pour appeler l'API backend
+
   async function updateElo(user1_id, user2_id, winner) {
     try {
       const response = await fetch("http://localhost:3001/update-elo", {
@@ -27,7 +27,6 @@ function CalculPage() {
     }
   }
 
-  // Simuler un appel API au clic (exemple)
   const handleEloUpdate = () => {
     updateElo("user1_id_example", "user2_id_example", "first");
   };

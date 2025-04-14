@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../navbar.jsx";
 import { createClient } from "@supabase/supabase-js";
-import "./Solo.css"; // Import du CSS
+import "./Solo.css"; 
 
 function Home() {
   const [question, setQuestion] = useState(null);
@@ -10,7 +10,7 @@ function Home() {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState(null);
   const [elo, setElo] = useState(null);
-  const [newElo, setNewElo] = useState(null); // Nouvel ELO après mise à jour
+  const [newElo, setNewElo] = useState(null); 
 
   // Instance Supabase
   const supabase = createClient(
@@ -33,7 +33,7 @@ const calculateValueSecondRange = (x) => {
   return (250 / (1 + Math.exp(-15 * (x - 0.1)))) - 250;
 };
 
-// Code principal
+//Fetch des questions affichées sur le site
 async function fetchRandomQuestion() { 
   setLoading(true);
   setSelectedAnswer(null);
@@ -116,10 +116,10 @@ async function fetchRandomQuestion() {
       // Calculer les probabilités pour chaque question
       const equalProbability = 1 / questions.length;
       const probabilities = questions.map((question) => {
-          const prob = calculateValueFirstRange(question.elo); // Appliquer la fonction de transformation pour ajuster la probabilité
+          const prob = calculateValueFirstRange(question.elo); 
           return {
               question: question,
-              probability: prob, // Probabilité ajustée
+              probability: prob, 
           };
       });
 
@@ -200,7 +200,7 @@ async function fetchRandomQuestion() {
         return;
       }
 
-      const userId = userData.user.id; // Récupération de l'ID de l'utilisateur
+      const userId = userData.user.id;
 
       if (!question || question.elo === undefined) {
         console.error("ELO de la question non disponible");
@@ -219,7 +219,7 @@ async function fetchRandomQuestion() {
         return;
       }
 
-      const playerElo = data.elo; // ELO actuel du joueur
+      const playerElo = data.elo; 
       console.log("Joueur ELO:", playerElo);
       console.log("Question ELO:", question.elo);
 
@@ -229,18 +229,18 @@ async function fetchRandomQuestion() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          player1_elo: playerElo, // ELO du joueur
-          player2_elo: question.elo, // ELO de la question
+          player1_elo: playerElo,
+          player2_elo: question.elo, 
           winner: won ? "first" : "second",
-          userId: userId, // Envoie l'ID de l'utilisateur
-          questionId: question.id, // Envoie l'ID de la question
+          userId: userId, 
+          questionId: question.id,
         }),
       });
 
       const responseData = await response.json();
       if (response.ok) {
         console.log("Nouveaux ELO:", responseData);
-        setElo(responseData.newElo1); // Met à jour l'affichage du nouvel ELO
+        setElo(responseData.newElo1); 
       } else {
         console.error("Erreur mise à jour ELO:", responseData.error);
       }
@@ -254,7 +254,7 @@ async function fetchRandomQuestion() {
     setLoading(true); // Désactive les boutons pendant le traitement
 
     const isCorrect = index === correctAnswerIndex;
-    updateElo(isCorrect); // Mise à jour de l'ELO en fonction de la réponse
+    updateElo(isCorrect);
 
     // Attendre 1 seconde avant de charger la prochaine question
     setTimeout(() => {

@@ -19,7 +19,7 @@ function Account() {
       const currentUser = await getCurrentUser();
       if (currentUser) {
         setUser(currentUser);
-        await handleUserSync(currentUser.id); // Synchronisation de l'ID
+        await handleUserSync(currentUser.id); 
       }
     };
 
@@ -36,7 +36,7 @@ function Account() {
   };
   const handleUserSync = async () => {
     const userId = user.id;
-    const elo = 1200; // Valeur d'ELO pour l'utilisateur test
+    const elo = 1200; 
 
     try {
       const response = await fetch("http://localhost:3001/auth-google", {
@@ -44,7 +44,7 @@ function Account() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ google_id: userId, elo: elo }), // Envoi du google_id et de l'elo
+        body: JSON.stringify({ google_id: userId, elo: elo }), 
       });
 
       if (!response.ok) {
@@ -59,8 +59,8 @@ function Account() {
   };
 
   const handleAddTestUser = async () => {
-    const userId = "f44d0894-787f-4b90-9d2a-f2244dafd4bf"; // ID utilisateur (google_id)
-    const elo = 1200; // Valeur d'ELO pour l'utilisateur test
+    const userId = "f44d0894-787f-4b90-9d2a-f2244dafd4bf";
+    const elo = 1200; 
 
     try {
       const response = await fetch("http://localhost:3001/test", {
@@ -68,7 +68,7 @@ function Account() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ google_id: userId, elo: elo }), // Envoi du google_id et de l'elo
+        body: JSON.stringify({ google_id: userId, elo: elo }), 
       });
 
       if (!response.ok) {
@@ -84,7 +84,7 @@ function Account() {
 
   const updateUserElo = async () => {
     const userId = user.id;
-    const eloIncrement = 4; // L'incrément d'ELO à ajouter
+    const eloIncrement = 4; 
 
     try {
       const response = await fetch("http://localhost:3001/update-elo", {
@@ -92,7 +92,7 @@ function Account() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_id: userId, eloIncrement: eloIncrement }), // Envoi du google_id
+        body: JSON.stringify({ user_id: userId, eloIncrement: eloIncrement }), 
       });
 
       if (!response.ok) {

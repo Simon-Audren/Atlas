@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../navbar.jsx";
-import Calculator from "../Calcul.jsx";
-import { createClient } from "@supabase/supabase-js";
 import "./Home.css";
-import AccordionItem from "../AccordionItem"; // Import du composant AccordionItem
+import AccordionItem from "../AccordionItem"; 
 
 function Home() {
   return (

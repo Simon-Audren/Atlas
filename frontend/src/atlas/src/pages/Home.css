@@ -1,59 +1,63 @@
 .illustration {
-    width: 30vw; /* La largeur de l'image ne dépasse pas 30% de la largeur de l'écran */
-    height: auto; /* Pour que l'image conserve ses proportions */
-  }
-  
-  .left-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-  }
-  
-  .right-content {
-    width: 30vw; /* Ajuste la largeur de l'image */
-    height: auto;
-    object-fit: cover; /* Permet à l'image de couvrir le conteneur tout en gardant ses proportions */
-  }
-  
-  .highlight {
-    color: #ffae00;
-    font-weight: bold;
-  }
-  
-  .text {
-    text-align: left;
-    font-size: 300%;
-    line-height: 1.5; /* Assure un espacement constant entre les lignes */
-  }
-  
-  .textContainer {
-    max-width: 100%; /* Empêche le texte de déborder */
-  }
-  .container {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 60px; /* Ajuster selon la hauteur de ta navbar */
-    max-height: calc(100vh - 60px); /* Prendre toute la hauteur restante après la navbar */
-    overflow-y: auto; /* Permet le défilement vertical */
-  }
-  
-  .accordion-container {
-    margin-top: 8rem;
-    overflow-y: hidden; /* Permet de faire défiler le contenu des accordéons */
-    padding: 0 1rem; /* Pour ajouter un peu de marge autour des accordéons */
-  }
-  .accordion-content {
-    text-align: left; /* Aligne le texte à gauche */
-    padding: 10px;    /* Ajoute de l'espace autour du contenu */
-    color: white;
-  }
-  .link{
-    color:white;
-  }
-  .description {
-    font-size: 0.875rem; /* taille petite */
-    font-style: italic;
-    text-align: center;
-    color: white; /* ou une autre couleur si tu veux */
-  }
+  width: 30vw;
+  height: auto;
+}
+
+.left-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.right-content {
+  width: 30vw;
+  height: auto;
+  object-fit: cover;
+}
+
+.highlight {
+  color: #ffae00;
+  font-weight: bold;
+}
+
+.text {
+  text-align: left;
+  font-size: 300%;
+  line-height: 1.5;
+}
+
+.textContainer {
+  max-width: 100%;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 60px;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+.accordion-container {
+  margin-top: 8rem;
+  overflow-y: hidden;
+  padding: 0 1rem;
+}
+
+.accordion-content {
+  text-align: left;
+  padding: 10px;
+  color: white;
+}
+
+.link {
+  color: white;
+}
+
+.description {
+  font-size: 0.875rem;
+  font-style: italic;
+  text-align: center;
+  color: white;
+}
